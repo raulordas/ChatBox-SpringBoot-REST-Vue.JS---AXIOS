@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<script src="http://unpkg.com/vue"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/estilos.css">
+</head>
+<body>
+<div id="app" class="center">
+<h1>ChatBox</h1>
+<h2>YO(B)</h2><textarea readonly rows="10" cols="50" class="boxinputb" v-bind:value="enviado"></textarea><br><br>
+<h2>EL OTRO(A)</h2><textarea readonly rows="10" cols="50" class="boxinputb" v-bind:value="respuesta"></textarea><br><br>
+<input type="text" class="boxinput" v-model="envio"><br><br>
+<input type="submit" class="btnform" v-on:click="enviar()">
+</div>
+</body>
+
+<script>
+
+var app = new Vue({
+	el: '#app',
+	data: {
+		envio: '',
+		respuesta: '',
+		enviado: ''
+		
+	},
+	
+	mounted() {
+		setInterval(this.comprobar, 1000);
+	},
+	
+	methods: {
+	
+		enviar(){
+		
+		this.enviado+= this.envio + '\n';
+		
+		axios.post('http://localhost:8086/btoa/' + this.envio, {headers: {
+		'Content-type': 'application/json',
+		}}).catch(function (error) {
+	
+			console.log('Error: ' + error);
+			alert("No hay conexión con el servidor");
+		})
+		},
+		
+		comprobar: function comprobar() {
+		
+		axios.get('http://localhost:8086/atob').then(response => (this.respuesta = response.data)).catch(function (error) {
+	
+			console.log('Error: ' + error);
+			alert("No hay conexión con el servidor");
+		}); 
+		}
+	}
+})
+</script>
+</html>
